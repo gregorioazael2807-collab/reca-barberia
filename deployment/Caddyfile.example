@@ -1,0 +1,6 @@
+# Plantilla. No iniciar ni pedir certificados hasta disponer de dominio autorizado.
+# Caddy y la aplicación deben ejecutarse en la misma máquina para este proxy loopback.
+{$RECA_DOMAIN} {
+    reverse_proxy 127.0.0.1:8081
+    header -Server
+}

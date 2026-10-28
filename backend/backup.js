@@ -1,0 +1,2 @@
+import {createBackup,verifyBackup} from './backups.js';
+try{const directory=await createBackup();await verifyBackup(directory);console.log(`Respaldo privado creado y checksums verificados: ${directory}. No compartir: contiene datos personales. Falta comprobar restauración y copia externa cifrada.`);}catch{console.error('No se completó el respaldo. Revisa privadamente configuración/permisos y versión de pg_dump.');process.exitCode=1;}

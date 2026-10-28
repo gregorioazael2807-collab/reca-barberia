@@ -1,0 +1,43 @@
+{
+  "name": "reca-barberia",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "phone": "node backend/phone.js",
+    "db:start": "bash backend/start-db.sh",
+    "test": "node --test --test-concurrency=1 backend/tests/*.test.js && npm --prefix prototipo test",
+    "test:browser": "node backend/tests/browser.mjs",
+    "test:mobile": "node backend/tests/mobile.mjs",
+    "test:rewards": "node backend/tests/rewards-browser.mjs",
+    "test:experience": "node backend/tests/experience-browser.mjs",
+    "test:waitlist": "node backend/tests/waitlist-browser.mjs",
+    "test:comanda": "node backend/tests/comanda-browser.mjs",
+    "test:comanda:language": "node backend/tests/comanda-language-browser.mjs",
+    "test:arrival": "node backend/tests/arrival-browser.mjs",
+    "test:content": "node backend/tests/content-browser.mjs",
+    "test:reviews": "node backend/tests/reviews-browser.mjs",
+    "test:gocho": "node backend/tests/gocho-browser.mjs",
+    "test:restore": "node backend/tests/restore.mjs",
+    "backup": "node backend/backup.js",
+    "backup:encrypted": "node backend/encrypted-backup.js",
+    "mail:test": "node backend/test-gmail.js",
+    "mail:enable": "node backend/enable-gmail.js",
+    "mail:appointments:enable": "node backend/enable-appointment-email.js",
+    "n8n:prepare": "node automation/setup.js",
+    "n8n:start": "npm run n8n:prepare && docker compose -f compose.n8n.yaml up -d",
+    "n8n:stop": "docker compose -f compose.n8n.yaml stop",
+    "test:n8n": "node backend/tests/n8n.mjs"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
+    "express": "^5.1.0",
+    "nodemailer": "^10.0.16",
+    "pg": "^8.16.3",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "qrcode": "^1.5.4"
+  }
+}

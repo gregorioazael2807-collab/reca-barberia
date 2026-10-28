@@ -1,0 +1,15 @@
+# EJEMPLO sin claves reales. Configurar valores reales privadamente en el hosting.
+# No copiar este archivo a .local ni activarlo sin elegir dominio/hosting y revisar guía.
+NODE_ENV=production
+PORT=8081
+RECA_HOST=127.0.0.1
+RECA_ORIGIN=https://barberia.example
+# Solo el proxy Caddy de la misma máquina; cambiar solo por rangos reales del proveedor.
+TRUST_PROXY=loopback
+DATABASE_URL=postgresql://usuario:CONTRASENA_PRIVADA@db.example:5432/reca
+DB_SSL=true
+UPLOAD_DIR=/var/lib/reca/uploads
+PRIVATE_DIR=/var/lib/reca/private
+BACKUP_DIR=/var/backups/reca
+# Los mensajes de citas y WhatsApp siguen en modo borradores.
+# Gmail se configura por separado en PRIVATE_DIR/gmail.env.

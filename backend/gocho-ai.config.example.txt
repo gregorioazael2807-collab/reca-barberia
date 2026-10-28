@@ -1,0 +1,6 @@
+# Copiar a .local/gocho-ai.env (no al directorio público). Permisos 600.
+# Introducir la clave en el editor privado, nunca en el chat.
+OPENAI_API_KEY=
+GOCHO_ENABLED=false
+GOCHO_MODEL=gpt-4.1-mini
+GOCHO_DAILY_LIMIT=10

@@ -1,0 +1,7 @@
+{
+  "editor.lineNumbers": "on",
+  "editor.accessibilitySupport": "auto",
+  "editor.renderLineHighlight": "all",
+  "breadcrumbs.enabled": true,
+  "workbench.editor.labelFormat": "long"
+}

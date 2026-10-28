@@ -1,0 +1,30 @@
+.gocho-workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;align-items:start}
+.gocho-workspace>*{min-width:0;margin:0}
+.gocho-quota{padding:.75rem 1rem;background:#102d41f2;color:#eff9ff;border-left:3px solid #59c6ff;border-radius:.4rem}
+.gocho-compose h2{color:#f2d18c;margin-top:0}
+.comanda-shell .gocho-response{border:2px solid #59c6ff;border-left-width:6px;background:linear-gradient(135deg,#173e60,#10263d);color:#f1faff;box-shadow:0 8px 28px #0007;scroll-margin-block:1rem;overflow-wrap:anywhere}
+.gocho-response h2{color:#c5edff}
+.gocho-response p{color:#eff9ff}
+.gocho-response small{color:#d3e9f5}
+.gocho-response-badge{display:block;font-size:.75rem;font-weight:700;letter-spacing:.12em;color:#a8e4ff;margin-bottom:.6rem}
+.gocho-your-order{padding:.6rem;background:#ffffff0a;border-radius:.4rem;overflow-wrap:anywhere}
+.gocho-response:focus{outline:2px solid #93deff;outline-offset:3px}
+.gocho-answer{font-size:1.2rem;font-weight:600;line-height:1.55;overflow-wrap:anywhere;padding:.8rem;border-radius:.5rem;background:#2d63844d}
+.gocho-response small{display:block;margin-top:.7rem;opacity:.85}
+.comanda-shell .gocho-response-error{border-color:#ff9dab;background:#39202b}
+.gocho-response-error h2,.gocho-response-error .gocho-response-badge{color:#ffc2cc}
+.gocho-quick{margin:1rem 0 1.5rem}
+.gocho-quick .library-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+.gocho-quick .button{flex:1 1 10rem}
+.gocho-details summary{cursor:pointer;font-weight:600;padding:.35rem 0}
+.gocho-details[open] summary{margin-bottom:1rem}
+.gocho-details article+article{border-top:1px solid #ffffff26;margin-top:1rem;padding-top:1rem}
+[data-gocho-chat] textarea{min-height:5rem;height:5.5rem;font-size:1rem;resize:vertical}
+[data-gocho-chat] small{display:block;margin-top:.6rem;opacity:.8}
+@media(min-width:768px){
+ .gocho-workspace{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:stretch}
+ .gocho-workspace .gocho-compose,.gocho-workspace .gocho-response{min-height:24rem}
+ .gocho-workspace .gocho-response{max-height:max(24rem,70dvh);overflow-y:auto;overscroll-behavior:contain}
+ [data-gocho-chat] textarea{min-height:8rem;height:clamp(8rem,18vh,12rem)}
+}
+@media(prefers-reduced-motion:reduce){.gocho-response{scroll-behavior:auto}}

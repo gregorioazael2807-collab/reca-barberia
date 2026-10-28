@@ -1,0 +1,10 @@
+node_modules/
+.local/
+.env
+.env.*
+!config.example.txt
+*.log
+*.pem
+*.key
+.DS_Store
+prototipo/evidencias/

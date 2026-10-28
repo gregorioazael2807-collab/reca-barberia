@@ -1,0 +1,172 @@
+{
+  "id": "recaDraftMessages",
+  "name": "RECA — correos automáticos (ENVÍO CONTROLADO)",
+  "active": false,
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Inicio",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "claim",
+      "name": "Recoger tareas de RECA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.RECA_AUTOMATION_BASE_URL + '/api/automation/claim' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RECA_AUTOMATION_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "draft",
+      "name": "Redactar correos para clientes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const renderMessage = function renderMessage(payload) {\n  const clean=value=>String(value??'').replace(/[\\u0000-\\u001f\\u007f]/g,' ').trim();\n  const name=clean(payload.customerName)||'cliente';\n  const date=new Intl.DateTimeFormat('es-US',{timeZone:payload.timezone,dateStyle:'full'}).format(new Date(payload.start));\n  const time=new Intl.DateTimeFormat('es-US',{timeZone:payload.timezone,timeStyle:'short'}).format(new Date(payload.start));\n  const price=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(payload.priceCents/100);\n  const service=clean(payload.serviceName);\n  const hours=payload.cancellationNoticeMinutes/60;\n  if(typeof payload.appUrl!=='string'||!/^https?:\\/\\/[a-z0-9.-]+(?::\\d{1,5})?\\/?$/i.test(payload.appUrl))throw new Error('Enlace de aplicación inválido.');\n  const appUrl=payload.appUrl.replace(/\\/$/,'');\n  const titles={confirmed:'Tu cita está confirmada',cancelled:'Cancelación de tu cita',rescheduled:'Nuevo horario de tu cita',reminder:'Recordatorio de tu cita'};\n  if(!titles[payload.event])throw new Error('Evento de mensaje inválido.');\n  const intros={confirmed:'Tu cita en RECA Barbería está confirmada. Será un gusto recibirte.',rescheduled:'Actualizamos el horario de tu cita en RECA Barbería. Estos son los detalles vigentes:',cancelled:'Tu cita en RECA Barbería está cancelada. El horario se ha liberado.',reminder:'Te recordamos tu próxima cita en RECA Barbería. Te esperamos en el horario indicado.'};\n  const details=`Servicio: ${service}\\nFecha: ${date}\\nHora: ${time} (hora de la barbería · ${clean(payload.timezone)})`;\n  const policy=payload.event==='reminder'\n    ? `El plazo para cancelar o cambiar era de ${hours} horas de anticipación y ya terminó.`\n    : `Puedes cancelar o cambiar tu cita con al menos ${hours} horas de anticipación, según las condiciones de tu reserva.`;\n  const action=payload.event==='cancelled'\n    ? `Cuando quieras volver, puedes reservar otra cita aquí:\\n${appUrl}/#booking`\n    : `Consulta o gestiona tu cita desde tu cuenta:\\n${appUrl}/#appointments`;\n  const bookingInfo=payload.event==='cancelled'?'':`\\nTotal de la reserva: ${price} USD\\nPago en el local${payload.city?`\\nUbicación: ${clean(payload.city)}`:''}\\n\\n${policy}`;\n  const local=appUrl.startsWith('http://')?'\\n\\nPrueba local: el enlace solo abre en la misma red Wi-Fi que la computadora de la barbería.':'';\n  const body=`Hola, ${name}:\\n\\n${intros[payload.event]}\\n\\n${details}${bookingInfo}\\n\\n${action}\\n\\nGracias por elegirnos.\\nRECA Barbería\\n\\nEste correo informa sobre tu cita; no es publicidad.${local}`;\n  // Legacy callers may still read whatsappText; the email-only n8n flow never saves it.\n  return {subject:`RECA Barbería · ${titles[payload.event]}`,emailText:body,whatsappText:body};\n};\nreturn $input.all().flatMap(item => (item.json.jobs || []).map(job => {const draft=renderMessage(job.payload);return {json:{id:job.id,leaseToken:job.leaseToken,message:{subject:draft.subject,emailText:draft.emailText}}};}));"
+      }
+    },
+    {
+      "id": "save",
+      "name": "Guardar borrador — NO enviar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.RECA_AUTOMATION_BASE_URL + '/api/automation/jobs/' + $json.id + '/draft' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RECA_AUTOMATION_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({leaseToken:$json.leaseToken,message:$json.message}) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "email",
+      "name": "Enviar correos nuevos autorizados",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        240
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.RECA_AUTOMATION_BASE_URL + '/api/automation/email/run' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RECA_AUTOMATION_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 90000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Inicio": {
+      "main": [
+        [
+          {
+            "node": "Recoger tareas de RECA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Enviar correos nuevos autorizados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recoger tareas de RECA": {
+      "main": [
+        [
+          {
+            "node": "Redactar correos para clientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redactar correos para clientes": {
+      "main": [
+        [
+          {
+            "node": "Guardar borrador — NO enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false,
+    "executionTimeout": 120
+  },
+  "pinData": {},
+  "tags": [],
+  "versionId": "67bb48ec-1162-4b01-8e01-7b485daeb2bb"
+}

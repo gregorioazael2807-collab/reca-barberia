@@ -8,3 +8,19 @@ node_modules/
 *.key
 .DS_Store
 prototipo/evidencias/
+
+# Datos privados y artefactos locales
+.env
+.env.*
+.local/
+.data/
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+*.pem
+*.key
+*.log
+.DS_Store
+
+node_modules

@@ -32,7 +32,7 @@ Panel privado: `/comanda/#gocho`. Comparte la base de RECA, no una copia operati
 No se realizó ninguna compra ni llamada real de desarrollo fuera de la cuota/auditoría. El dueño ya efectuó consultas reales de agenda después de autorizar la activación. ChatGPT y el API de OpenAI pueden tener facturación separada.
 
 1. Revisar precios del modelo y decidir el presupuesto/medio de pago en la cuenta de OpenAI. Crear una clave de proyecto para RECA con permisos mínimos aplicables. No compartirla en el chat ni introducirla como orden del asistente.
-2. Copiar `backend/gocho-aiconfig.example.txt` al directorio privado del servidor como `gocho-ai.env` (localmente `.local/gocho-ai.env`). Archivo de permisos `600`, directorio privado `700`, nunca dentro de `prototipo`, medios o un repositorio público. Editar directamente en un editor local privado.
+2. Copiar `backend/gocho-ai.config.example.txt` al directorio privado del servidor como `gocho-ai.env` (localmente `.local/gocho-ai.env`). Archivo de permisos `600`, directorio privado `700`, nunca dentro de `prototipo`, medios o un repositorio público. Editar directamente en un editor local privado.
 3. Completar `OPENAI_API_KEY`, revisar `GOCHO_MODEL=gpt-4.1-mini` y `GOCHO_DAILY_LIMIT=10`, y cambiar `GOCHO_ENABLED=true` **solo cuando se autorice activar el API y su gasto**. La configuración de entorno prevalece sobre el archivo.
 4. Reiniciar el servidor y probar una consulta no sensible desde el panel dueño. No hay comprobación automática de clave que consuma llamadas al arrancar.
 
